@@ -1,6 +1,5 @@
 # Enterprise Healthcare Hybrid Cloud Architecture on AWS
 
-![Architecture](architecture/01-healthcare-hybrid-cloud-architecture.png)
 
 ## Project Overview
 
