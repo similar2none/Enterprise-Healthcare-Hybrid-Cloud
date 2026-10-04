@@ -1,5 +1,6 @@
 # Enterprise Healthcare Hybrid Cloud Architecture on AWS
 
+![Healthcare Hybrid Cloud Architecture](architecture/01-healthcare-hybrid-cloud-architecture.png)
 
 ## Project Overview
 
@@ -94,7 +95,9 @@ The architecture also includes private application/database network segmentation
 
 ---
 
-# AWS Site-to-Site VPN
+# Redundant AWS Site-to-Site VPN
+
+
 
 Connectivity between the hospital environment and AWS is provided by an **AWS Site-to-Site VPN**.
 
@@ -116,10 +119,12 @@ Tunnel2 remains available as the secondary path.
 ---
 
 # Linux Virtual Tunnel Interfaces
+![VTI Interfaces](screenshots/03-vti-interfaces.png)
+
+
 
 Linux VTIs were configured on the Ubuntu VPN router to provide route-based connectivity through the IPsec tunnels.
 
-![VTI Interfaces](screenshots/03-vti-interfaces.png)
 
 The VTI design allows standard Linux routing to determine which encrypted VPN tunnel carries traffic.
 
@@ -129,6 +134,8 @@ This provides greater visibility and control over the hybrid routing path.
 
 # Primary and Backup Routing
 
+![Redundant Routing](screenshots/04-redundant-routing.png)
+
 Two routes to the AWS cloud network were configured:
 
 ```text
@@ -136,7 +143,7 @@ Two routes to the AWS cloud network were configured:
 10.30.0.0/16 → Tunnel2 → Metric 200
 ```
 
-![Redundant Routing](screenshots/04-redundant-routing.png)
+
 
 Under normal conditions, Linux selects Tunnel1.
 
@@ -145,6 +152,8 @@ If the primary route becomes unavailable, Tunnel2 can carry the traffic.
 ---
 
 # End-to-End Private Connectivity
+
+![Private Connectivity](screenshots/05-private-connectivity.png)
 
 Connectivity was validated between the simulated hospital workload and the private AWS cloud workload.
 
@@ -160,7 +169,7 @@ Destination:
 10.30.11.37
 ```
 
-![Private Connectivity](screenshots/05-private-connectivity.png)
+
 
 Testing produced:
 
@@ -176,9 +185,11 @@ This demonstrates successful private communication across the Site-to-Site VPN.
 
 # Packet-Level VPN Validation
 
+![Packet Capture](screenshots/06-packet-level-proof.png)
+
 Connectivity was also validated using `tcpdump` on the Ubuntu VPN router.
 
-![Packet Capture](screenshots/06-packet-level-proof.png)
+
 
 The capture demonstrated the complete traffic path:
 
@@ -253,6 +264,8 @@ This validated functional VPN redundancy rather than simply confirming that both
 
 # Automated VPN Self-Healing
 
+![VPN Self-Healing](screenshots/07-self-healing-automation.png)
+
 During long-term testing, the VPN infrastructure revealed an additional operational scenario: IPsec CHILD_SAs could disappear while the strongSwan service itself remained running.
 
 Rather than relying on manual intervention, a lightweight automated recovery mechanism was implemented using **systemd**.
@@ -278,7 +291,6 @@ Check IPsec CHILD_SAs
 
 The recovery timer checks the VPN state every **60 seconds** and initiates a missing CHILD_SA when necessary.
 
-![VPN Self Healing](screenshots/07-self-healing-automation.png)
 
 A controlled failure test was performed against Tunnel2.
 
